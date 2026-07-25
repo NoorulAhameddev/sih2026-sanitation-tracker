@@ -1,0 +1,27 @@
+{
+  "name": "sih-2026-backend",
+  "version": "1.0.0",
+  "description": "SIH 2026 Skill Assessment — Waste Collection Worker Attendance & Route Register",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "dev:client": "cd client && npm run dev",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.1.2",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-rate-limit": "^8.6.0",
+    "helmet": "^7.1.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10"
+  }
+}

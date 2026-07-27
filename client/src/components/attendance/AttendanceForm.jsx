@@ -9,6 +9,7 @@ import Button from '../ui/Button';
 const attendanceSchema = z.object({
   worker_id: z.string().min(1, "Worker ID is required").max(50),
   worker_name: z.string().min(1, "Worker name is required").max(100),
+  phone_number: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits").optional().default(''),
   route_id: z.string().min(1, "Route ID is required").max(50),
   ward: z.string().min(1, "Ward is required").max(50),
   covered: z.enum(['Yes', 'No'], {
@@ -29,6 +30,7 @@ const AttendanceForm = ({ defaultValues, onSubmit, isSubmitting = false, serverE
     defaultValues: defaultValues || {
       worker_id: '',
       worker_name: '',
+      phone_number: '',
       route_id: '',
       ward: '',
       covered: 'Yes',
@@ -63,6 +65,17 @@ const AttendanceForm = ({ defaultValues, onSubmit, isSubmitting = false, serverE
             {...register('worker_name')} 
             placeholder="e.g. Ramesh Kumar" 
             error={errors.worker_name?.message}
+            disabled={isSubmitting}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">Worker Phone Number</label>
+          <Input 
+            {...register('phone_number')} 
+            placeholder="e.g. 9876543101" 
+            maxLength={10}
+            error={errors.phone_number?.message}
             disabled={isSubmitting}
           />
         </div>

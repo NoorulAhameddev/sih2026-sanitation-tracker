@@ -5,7 +5,7 @@ import Badge from '../../components/ui/Badge';
 import Button from '../../components/ui/Button';
 import Loader from '../../components/ui/Loader';
 import EmptyState from '../../components/ui/EmptyState';
-import { Calendar, User, MapPin, MessageSquare, ArrowLeft, Edit2, AlertCircle, Truck } from 'lucide-react';
+import { Calendar, User, MapPin, MessageSquare, ArrowLeft, Edit2, AlertCircle, Truck, Phone } from 'lucide-react';
 import { useAttendanceById } from '../../hooks/useAttendance';
 
 const AttendanceDetails = () => {
@@ -83,6 +83,15 @@ const AttendanceDetails = () => {
               </dt>
               <dd className="mt-1 text-sm text-foreground font-semibold">
                 {record.worker_name} ({record.worker_id})
+              </dd>
+            </div>
+            <div className="sm:col-span-1">
+              <dt className="text-sm font-medium text-muted-foreground flex items-center">
+                <Phone className="w-4 h-4 mr-2" />
+                Phone Number
+              </dt>
+              <dd className="mt-1 text-sm text-foreground">
+                {record.phone_number || <span className="italic text-gray-400">Not provided</span>}
               </dd>
             </div>
             <div className="sm:col-span-1">

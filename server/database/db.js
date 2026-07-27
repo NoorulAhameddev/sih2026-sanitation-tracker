@@ -18,12 +18,20 @@ const initDb = () => {
         db = new Database(dbPath);
         logger.info(`Connected to SQLite database at ${dbPath}`);
         
-        // Auto-migration: Check if table has new schema columns (e.g. priority_score) and drop if legacy
+        // Auto-migration: Check if table has new schema columns and drop if legacy
         const tableInfo = db.pragma('table_info(attendance_records)');
         const hasPriorityScore = tableInfo.some(col => col.name === 'priority_score');
         if (tableInfo.length > 0 && !hasPriorityScore) {
             db.exec('DROP TABLE IF EXISTS attendance_records;');
             logger.info('Dropped legacy schema table for migration to Priority Score schema.');
+        }
+
+        // Auto-migration: Add phone_number column if table exists but column is missing
+        const currentTableInfo = db.pragma('table_info(attendance_records)');
+        const hasPhoneNumber = currentTableInfo.some(col => col.name === 'phone_number');
+        if (currentTableInfo.length > 0 && !hasPhoneNumber) {
+            db.exec("ALTER TABLE attendance_records ADD COLUMN phone_number TEXT DEFAULT '';");
+            logger.info('Migrated: Added phone_number column to attendance_records.');
         }
 
         // Execute schema.sql
@@ -34,6 +42,17 @@ const initDb = () => {
             logger.info('Schema executed successfully.');
         } else {
             logger.warn(`Schema file not found at ${schemaPath}`);
+        }
+
+        // Ensure concurrency-safe unique index exists (for pre-existing databases)
+        try {
+            db.exec(`
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_worker_route_date
+                    ON attendance_records(worker_id, route_id, date)
+                    WHERE deleted_at IS NULL;
+            `);
+        } catch (indexErr) {
+            logger.warn('Unique index may already exist or could not be created:', indexErr.message);
         }
 
         // Automatically seed database with 40 sample records

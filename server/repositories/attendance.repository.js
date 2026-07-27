@@ -1,17 +1,19 @@
 const { getDb } = require('../database/db');
+const AppError = require('../errors/AppError');
 
 class AttendanceRepository {
     create(data) {
         const db = getDb();
         const insert = db.transaction((attendanceData) => {
             const stmt = db.prepare(`
-                INSERT INTO attendance_records (date, worker_id, worker_name, route_id, ward, covered, complaints_received, priority_score, remarks)
-                VALUES (@date, @worker_id, @worker_name, @route_id, @ward, @covered, @complaints_received, @priority_score, @remarks)
+                INSERT INTO attendance_records (date, worker_id, worker_name, phone_number, route_id, ward, covered, complaints_received, priority_score, remarks)
+                VALUES (@date, @worker_id, @worker_name, @phone_number, @route_id, @ward, @covered, @complaints_received, @priority_score, @remarks)
             `);
             const info = stmt.run({
                 date: attendanceData.date,
                 worker_id: attendanceData.worker_id,
                 worker_name: attendanceData.worker_name,
+                phone_number: attendanceData.phone_number || '',
                 route_id: attendanceData.route_id,
                 ward: attendanceData.ward,
                 covered: attendanceData.covered,
@@ -21,7 +23,22 @@ class AttendanceRepository {
             });
             return { id: info.lastInsertRowid, ...attendanceData };
         });
-        return insert(data);
+
+        // Concurrency Safety (Change 2): Catch UNIQUE constraint violations
+        // If two identical requests race past the findByDetails() check,
+        // the database-level UNIQUE index guarantees only one insert succeeds.
+        try {
+            return insert(data);
+        } catch (err) {
+            if (err.message && err.message.includes('UNIQUE constraint failed')) {
+                throw new AppError(
+                    'Concurrent duplicate detected: this worker, route, and date combination was just saved by another request',
+                    409,
+                    'CONCURRENT_DUPLICATE'
+                );
+            }
+            throw err;
+        }
     }
 
     findAll(options = {}) {

@@ -68,6 +68,7 @@ const EditAttendance = () => {
             defaultValues={{
               worker_id: record.worker_id,
               worker_name: record.worker_name,
+              phone_number: record.phone_number || '',
               route_id: record.route_id,
               ward: record.ward,
               covered: record.covered,

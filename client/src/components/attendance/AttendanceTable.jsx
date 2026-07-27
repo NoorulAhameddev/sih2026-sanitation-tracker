@@ -98,6 +98,7 @@ const AttendanceTable = ({ data, isLoading, isError, refetch }) => {
                   <TableCell>
                     <div className="font-semibold text-foreground">{record.worker_name}</div>
                     <div className="text-xs text-muted-foreground">{record.worker_id}</div>
+                    {record.phone_number && <div className="text-xs text-muted-foreground">📞 {record.phone_number}</div>}
                   </TableCell>
                   <TableCell>
                     <div className="font-medium">{record.route_id}</div>

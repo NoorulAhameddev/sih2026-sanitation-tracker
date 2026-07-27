@@ -34,11 +34,12 @@ describe('AttendanceService Unit Tests', () => {
         it('should create route attendance successfully', () => {
             attendanceRepository.findByDetails.mockReturnValue(null);
             const data = { worker_id: 'WRK-101', worker_name: 'Test Worker', route_id: 'RT-01', ward: 'Ward-1', covered: 'Yes', complaints_received: 0, date: '2025-01-01', remarks: 'Clear' };
-            attendanceRepository.create.mockReturnValue({ id: 1, ...data });
+            // The service mutates data by adding priority_score before calling create()
+            attendanceRepository.create.mockReturnValue({ id: 1, ...data, priority_score: 0 });
 
             const result = attendanceService.createAttendance(data);
 
-            expect(result).toEqual({ id: 1, ...data });
+            expect(result).toEqual({ id: 1, ...data, priority_score: 0 });
             expect(attendanceRepository.create).toHaveBeenCalledWith(data);
             expect(logger.info).toHaveBeenCalled();
         });

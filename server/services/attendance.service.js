@@ -21,6 +21,10 @@ class AttendanceService {
         const complaints = parseInt(data.complaints_received) || 0;
         data.priority_score = (covered === 'No' ? 10000 : 0) + complaints;
 
+        // The repository.create() call is now concurrency-safe:
+        // If two requests pass the findByDetails() check above simultaneously,
+        // the UNIQUE database index ensures only one INSERT succeeds.
+        // The other throws CONCURRENT_DUPLICATE (409), which propagates to the client.
         const record = attendanceRepository.create(data);
         logger.info(`Route Attendance Created\nWorker: ${record.worker_id}\nRoute: ${record.route_id}\nDate: ${record.date}`);
         return record;

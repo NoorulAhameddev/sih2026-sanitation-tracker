@@ -1,4 +1,4 @@
-const Database = require('better-sqlite3');
+const Database = require('./sqlite-adapter');
 const fs = require('fs');
 const path = require('path');
 const logger = require('../utils/logger');

@@ -1,6 +1,6 @@
 # Database Documentation
 
-The project uses `SQLite` with the `better-sqlite3` driver.
+The project uses `SQLite` via a policy-safe adapter wrapping Node.js built-in `node:sqlite` (DatabaseSync), ensuring zero native `.node` DLL blocks under Windows Application Control policies.
 
 ## Schema setup
 The database schema is defined in `server/database/schema.sql` and is executed automatically upon server startup if the file exists.

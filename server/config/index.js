@@ -13,7 +13,7 @@ const requiredConfig = [
 
 for (const req of requiredConfig) {
     if (!config[req.key]) {
-        console.error(`❌ Missing required environment variable: ${req.env}`);
+        console.error(`[ERROR] Missing required environment variable: ${req.env}`);
         process.exit(1);
     }
 }

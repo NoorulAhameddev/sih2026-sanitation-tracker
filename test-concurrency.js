@@ -72,23 +72,23 @@ async function main() {
 
   // Display results
   console.log('┌──────────────────────────────────────────────────────────┐');
-  console.log(`│  ${resultA.label}  →  HTTP ${resultA.status}  ${resultA.status === 201 ? '✅ CREATED (Success)' : resultA.status === 409 ? '🚫 CONFLICT (Refused)' : '⚠️ UNEXPECTED'}`);
-  console.log(`│  ${resultB.label}  →  HTTP ${resultB.status}  ${resultB.status === 201 ? '✅ CREATED (Success)' : resultB.status === 409 ? '🚫 CONFLICT (Refused)' : '⚠️ UNEXPECTED'}`);
+  console.log(`│  ${resultA.label}  ->  HTTP ${resultA.status}  ${resultA.status === 201 ? '[CREATED] (Success)' : resultA.status === 409 ? '[CONFLICT] (Refused)' : '[UNEXPECTED]'}`);
+  console.log(`│  ${resultB.label}  ->  HTTP ${resultB.status}  ${resultB.status === 201 ? '[CREATED] (Success)' : resultB.status === 409 ? '[CONFLICT] (Refused)' : '[UNEXPECTED]'}`);
   console.log('└──────────────────────────────────────────────────────────┘');
   console.log('');
 
   // Verdict
   const statuses = [resultA.status, resultB.status].sort();
   if (statuses[0] === 201 && statuses[1] === 409) {
-    console.log('✅ PASS — Exactly ONE succeeded (201), the other was politely refused (409).');
+    console.log('[PASS] Exactly ONE succeeded (201), the other was politely refused (409).');
     console.log('   Concurrency safety is WORKING correctly.');
   } else if (statuses[0] === 201 && statuses[1] === 201) {
-    console.log('❌ FAIL — BOTH requests succeeded! Concurrency protection is NOT working.');
+    console.log('[FAIL] BOTH requests succeeded! Concurrency protection is NOT working.');
   } else if (statuses[0] === 409 && statuses[1] === 409) {
-    console.log('⚠️  Both were refused (409). The record may already exist from a previous test run.');
+    console.log('[WARN] Both were refused (409). The record may already exist from a previous test run.');
     console.log('   Delete the test record and try again, or check the database.');
   } else {
-    console.log('⚠️  Unexpected result. Check the server logs.');
+    console.log('[WARN] Unexpected result. Check the server logs.');
   }
 
   console.log('');

@@ -1,3 +1,15 @@
+// Suppress SQLite experimental warning
+const originalEmit = process.emitWarning;
+process.emitWarning = (warning, ...args) => {
+  if (typeof warning === 'string' && warning.includes('SQLite is an experimental feature')) {
+    return;
+  }
+  if (warning && warning.name === 'ExperimentalWarning' && warning.message && warning.message.includes('SQLite')) {
+    return;
+  }
+  return originalEmit.call(process, warning, ...args);
+};
+
 const { DatabaseSync } = require('node:sqlite');
 
 /**
